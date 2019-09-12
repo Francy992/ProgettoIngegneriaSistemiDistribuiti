@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.francy.progettoingegneriasistemidistribuiti.MainActivity">
+    tools:context=".MainActivity">
 
-    <TextView
+    <!--Button to request storage permission-->
+    <Button
+        android:id="@+id/storage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Storage"
+        android:onClick="StorageClick"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:layout_centerHorizontal="true"/>
 
-</android.support.constraint.ConstraintLayout>
+    <!--Button to request camera permission-->
+    <Button
+        android:id="@+id/camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:layout_below="@id/storage"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
