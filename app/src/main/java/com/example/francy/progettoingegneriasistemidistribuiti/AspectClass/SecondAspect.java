@@ -1,6 +1,8 @@
-package com.example.francy.progettoingegneriasistemidistribuiti;
+package com.example.francy.progettoingegneriasistemidistribuiti.AspectClass;
 
 import android.util.Log;
+
+import com.example.francy.progettoingegneriasistemidistribuiti.DebugName;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -15,31 +17,40 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class SecondAspect {
 
-    //@Pointcut("execution(int Prova(..))") QUESTO è FUNZIONANTE
+    //@Pointcut("execution(int Prova(..))")//QUESTO è FUNZIONANTE
+    //@Pointcut("execution(* Prova(..))")//QUESTO è FUNZIONANTE
+    //@Pointcut("execution(* Prova(int, String))")//FUNZIONANTE
+    @Pointcut("execution(* *(int, String))") //FUNZIOPNANTE
 
-    @Pointcut("execution(@com.example.francy.progettoingegneriasistemidistribuiti.MainActivity int Prova(..))")
-    public void pointcut() { }
+    // /@Pointcut("execution(* Prova(*))")//NON è FUNZIONANTE
+    ///@Pointcut("execution(* *(..)")//NON è FUNZIONANTE
+
+    //@Pointcut("execution(@com.example.francy.progettoingegneriasistemidistribuiti.MainActivity int Prova(..))")
+    public void pointcut() {
+
+    }
 
     @Around("pointcut()")
     public Object onClickAdvice(ProceedingJoinPoint jp) throws Throwable  {
         //int ciao = 1;
-        Log.d(DebugName.TAG,
+        Log.d(DebugName.SECOND,
                 "Entering class: " + jp.getSignature().getDeclaringTypeName() +
                         " - before method: " + jp.getSignature().getName());
 
-        Log.d(DebugName.TAG, "onClickAdvice... ");
+        Log.d(DebugName.SECOND, "onClickAdvice... ");
         Object result = jp.proceed();
         return result;
     }
 
-    @Pointcut("execution(int checkSelfPermission(..))")
+    //@Pointcut("execution(* checkSelfPermission(..))")
+    @Pointcut("execution(* checkSelfPermission(..))")
     public void checkSelfPermission() {
 
     }
 
     @Before("checkSelfPermission()")
     public Object checkSelfPermissionAdvice(ProceedingJoinPoint jp) throws Throwable{
-        Log.d(DebugName.TAG, "checkSelfPermissionAdvice...");
+        Log.d(DebugName.SECOND, "checkSelfPermissionAdvice...");
         Object result = jp.proceed();
         return result;
     }
@@ -51,6 +62,6 @@ public class SecondAspect {
 
     @Around("onRequestPermissions()")
     public void onRequestPermissionsAdvice(ProceedingJoinPoint jp) {
-        Log.d(DebugName.TAG, "onRequestPermissionsAdvice...");
+        Log.d(DebugName.SECOND, "onRequestPermissionsAdvice...");
     }
 }

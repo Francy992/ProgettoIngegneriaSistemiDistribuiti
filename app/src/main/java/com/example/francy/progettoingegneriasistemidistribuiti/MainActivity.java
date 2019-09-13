@@ -104,13 +104,8 @@ public class MainActivity extends AppCompatActivity {
 }
 */
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.widget.Button;
-
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -224,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String POINTCUT_METHOD =
             "execution(void com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.test()";
 
-    //@AnnotationTrace
+    @AnnotationTrace
     public void test(){
         Log.d("clickButton", "test: invocata funzione");
     }
@@ -233,6 +228,8 @@ public class MainActivity extends AppCompatActivity {
     public void StorageClick(View view) {
         Log.d("clickButton", "Click storageclisk");
         Prova(15, "Allik");
+        Prova2(10,"Bauu");
+        Prova3();
         test();
         Log.d("clickButton", "ritornato dalla funzione test.");
         /*checkPermission(
@@ -240,15 +237,19 @@ public class MainActivity extends AppCompatActivity {
                 STORAGE_PERMISSION_CODE);*/
     }
 
-    @Pointcut("execution(void *.onClick(..))")
-    @Before("StorageClick() && args(view)")
-    public void onClickAdvice(View view) {
-        Log.d(DebugName.TAG, "onClickAdvice: Prima di StorageClick");
+    public static int Prova(int ciao, String Provaaa){
+        Log.d(DebugName.OUT, " Prova: Metodo prova " + ciao + " - " + Provaaa);
+        float provaa = (float) Math.random();
+        return 6;
     }
 
-    public static int Prova(int ciao, String Provaaa){
-        Log.d(DebugName.TAG, " Prova: Metodo prova " + ciao + " - " + Provaaa);
-        return 6;
+    public static void Prova2(int ciao, String Provaaa){
+        Log.d(DebugName.OUT, " Prova 2 invocato ");
+    }
+
+    public static int Prova3(){
+        Log.d(DebugName.OUT, " Prova 3 invocato ");
+        return 10;
     }
 
 

@@ -1,6 +1,9 @@
-package com.example.francy.progettoingegneriasistemidistribuiti;
+package com.example.francy.progettoingegneriasistemidistribuiti.AspectClass;
 
 import android.util.Log;
+
+import com.example.francy.progettoingegneriasistemidistribuiti.DebugName;
+import com.example.francy.progettoingegneriasistemidistribuiti.StopWatch;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -52,7 +55,7 @@ public class FirstAspect {
      */
     private static String buildLogMessage(String methodName, long methodDuration, int cont) {
         StringBuilder message = new StringBuilder();
-        message.append(DebugName.TAG + " Call number " + cont + ", Method name: ");
+        message.append(DebugName.FIRST + " Call number " + cont + ", Method name: ");
         message.append(methodName);
         message.append(" --> ");
         message.append("[");
