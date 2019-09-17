@@ -9,101 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-/*
-public class MainActivity extends AppCompatActivity {
-
-    public int cont = 0;
-    public final int ID_RICHIESTA_PERMISSION = 1;
-    public final int ID_RICHIESTA_PERMISSION_NETWORK = 2;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-
-
-    //Before("onButtonClick() && args(view)")
-    public void RichiediPermessiLocalizzazione(View view) {
-        cont++;
-        Log.d("clickButton", "clickButton: Prova numero " + cont);
-        Toast.makeText(MainActivity.this, "Richiesta di permesso inviata", Toast.LENGTH_SHORT).show();
-
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.SEND_SMS}, ID_RICHIESTA_PERMISSION);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-
-        }
-    }
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case ID_RICHIESTA_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission concessa: eseguiamo il codice
-                    Log.d("clickButton", "Permesso di localizzazione concesso");
-                } else {
-                    // permission negata: provvediamo in qualche maniera
-                    Log.d("clickButton", "Permesso di localizzazione negato");
-                }
-                return;
-            }
-            case ID_RICHIESTA_PERMISSION_NETWORK: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission concessa: eseguiamo il codice
-                    Log.d("clickButton", "Permesso di network concesso");
-                } else {
-                    // permission negata: provvediamo in qualche maniera
-                    Log.d("clickButton", "Permesso di network negato");
-                }
-                return;
-            }
-        }
-    }
-
-    public void ControllaPermessiLocalizzazione(View view) {
-        // controlliamo se la permission è concessa
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            // se arriviamo qui è perchè la permission non è stata ancora concessa
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
-                // mostriamo ulteriori informazioni all'utente riguardante l'uso della permission nell'app ed eventualmente richiediamo la permission
-                Log.d("clickButton", "Controllo Localizzazione: Permesso di localizzazione concesso");
-            } else {
-                // se siamo qui è perchè non si è mostrata alcuna spiegazione all'utente, richiesta di permission
-                Log.d("clickButton", "Controllo Localizzazione: Permesso di localizzazione negato, rieseguo la richiesta.");
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.SEND_SMS}, ID_RICHIESTA_PERMISSION);
-            }
-        }
-    }
-
-    public void ControllaPermessiNetwork(View view) {
-        // controlliamo se la permission è concessa
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // se arriviamo qui è perchè la permission non è stata ancora concessa
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_NETWORK_STATE)) {
-                // mostriamo ulteriori informazioni all'utente riguardante l'uso della permission nell'app ed eventualmente richiediamo la permission
-                Log.d("clickButton", "Controllo network: Permesso di network concesso");
-
-            } else {
-                // se siamo qui è perchè non si è mostrata alcuna spiegazione all'utente, richiesta di permission
-                Log.d("clickButton", "Controllo Network: Permesso di network non presente, rieseguo la richiesta.");
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, ID_RICHIESTA_PERMISSION_NETWORK);
-            }
-        }
-        else{
-            Log.d("clickButton", "Permesso di network già garantito.");
-        }
-    }
-}
-*/
-
 import android.support.annotation.NonNull;
 import android.widget.Button;
 
@@ -219,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String POINTCUT_METHOD =
             "execution(void com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.test()";
 
-    @AnnotationTrace
+    //@AnnotationTrace
     public void test(){
         Log.d("clickButton", "test: invocata funzione");
     }

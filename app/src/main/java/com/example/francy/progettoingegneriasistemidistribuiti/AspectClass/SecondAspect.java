@@ -16,28 +16,27 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class SecondAspect {
+    //***************************FUNZIONANTE SE DECOMMENTATO.
 
+    /*
     //@Pointcut("execution(int Prova(..))")//QUESTO è FUNZIONANTE
     //@Pointcut("execution(* Prova(..))")//QUESTO è FUNZIONANTE
     //@Pointcut("execution(* Prova(int, String))")//FUNZIONANTE
     @Pointcut("execution(* *(int, String))") //FUNZIOPNANTE
 
+
     // /@Pointcut("execution(* Prova(*))")//NON è FUNZIONANTE
     ///@Pointcut("execution(* *(..)")//NON è FUNZIONANTE
 
     //@Pointcut("execution(@com.example.francy.progettoingegneriasistemidistribuiti.MainActivity int Prova(..))")
+    //@Pointcut("execution(int checkSelfPermission(..))")
     public void pointcut() {
 
     }
 
     @Around("pointcut()")
     public Object onClickAdvice(ProceedingJoinPoint jp) throws Throwable  {
-        //int ciao = 1;
-        Log.d(DebugName.SECOND,
-                "Entering class: " + jp.getSignature().getDeclaringTypeName() +
-                        " - before method: " + jp.getSignature().getName());
-
-        Log.d(DebugName.SECOND, "onClickAdvice... ");
+        Log.d(DebugName.SECOND,"onClickAdvice-->" + jp.toString());
         Object result = jp.proceed();
         return result;
     }
@@ -50,7 +49,7 @@ public class SecondAspect {
 
     @Before("checkSelfPermission()")
     public Object checkSelfPermissionAdvice(ProceedingJoinPoint jp) throws Throwable{
-        Log.d(DebugName.SECOND, "checkSelfPermissionAdvice...");
+        Log.d(DebugName.SECOND, "checkSelfPermissionAdvice-->" + jp.toString());
         Object result = jp.proceed();
         return result;
     }
@@ -61,7 +60,9 @@ public class SecondAspect {
     }
 
     @Around("onRequestPermissions()")
-    public void onRequestPermissionsAdvice(ProceedingJoinPoint jp) {
-        Log.d(DebugName.SECOND, "onRequestPermissionsAdvice...");
-    }
+    public Object onRequestPermissionsAdvice(ProceedingJoinPoint jp)throws Throwable {
+        Log.d(DebugName.SECOND, "onRequestPermissionsAdvice-->" + jp.toString());
+        Object result = jp.proceed();
+        return result;
+    }*/
 }

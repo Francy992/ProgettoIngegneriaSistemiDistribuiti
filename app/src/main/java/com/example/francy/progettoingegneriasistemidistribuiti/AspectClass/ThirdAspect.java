@@ -16,21 +16,18 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class ThirdAspect {
-    //private static final String ALLMETHOD = "execution(public * com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.*(..))"; //Funzionante per MainActivity
-    private static final String ALLMETHOD = "execution(public * java.lang.Math.*(..))";
+    //***************************FUNZIONANTE SE DECOMMENTATO.
+    /*private static final String ALLMETHOD = "execution(public * com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.*(..))"; //Funzionante per MainActivity
+    //private static final String ALLMETHOD = "execution(public * java.lang.Math.*(..))";
+    //private static final String ALLMETHOD = "execution(* *(..))";
     @Pointcut(ALLMETHOD)
     public void AllMethod(){    }
 
-    @Before("AllMethod()")
-    public void onClickAdvice() {
-        //int ciao = 1;
-        /*Log.d(DebugName.THIRD,
-                "Entering class: " + jp.getSignature().getDeclaringTypeName() +
-                        " - before method: " + jp.getSignature().getName());*/
-
-        Log.d(DebugName.THIRD, "onClickAdvice... ");
-        //Object result = jp.proceed();
-
-    }
+    @Around("AllMethod()")
+    public Object onClickAdvice(ProceedingJoinPoint jp) throws Throwable {
+        Log.d(DebugName.THIRD, jp.toString());
+        Object result = jp.proceed();
+        return result;
+    }*/
 
 }
