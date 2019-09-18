@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Storage"
-        android:onClick="StorageClick"
         android:layout_marginTop="16dp"
         android:padding="8dp"
         android:layout_centerHorizontal="true"/>
@@ -27,5 +26,16 @@
         android:padding="8dp"
         android:layout_below="@id/storage"
         android:layout_centerHorizontal="true"/>
+
+    <!--Button to request Network permission-->
+    <Button
+        android:id="@+id/network"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/camera"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:text="Network" />
 
 </RelativeLayout>

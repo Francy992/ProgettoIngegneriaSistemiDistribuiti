@@ -13,5 +13,9 @@ public class DebugName {
 
     public final static String THIRD = "Francionic - Terzo:";
 
-    public final static String GENERIC = "Android.Support:";
+    public final static String GENERIC = "Francionic - Android.Support:";
+
+    public final static String MAINACTIVITY = "Francionic - MainActivity:";
+
+    public final static String ONREQUESTPERMISSIONCALLBACK = "Francionic - OnRequestCallback:";
 }

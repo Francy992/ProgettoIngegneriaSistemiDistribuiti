@@ -16,13 +16,14 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     // Defining Buttons
-    private Button storage, camera;
+    private Button storage, camera, network;
 
     // Defining Permission codes.
     // We can give any value
     // but unique for each permission.
     private static final int CAMERA_PERMISSION_CODE = 100;
     private static final int STORAGE_PERMISSION_CODE = 101;
+    private static final int NETWORK_CHECK_PERMISSION_CODE  = 102;
 
     @Override
     //@AnnotationTrace
@@ -33,15 +34,18 @@ public class MainActivity extends AppCompatActivity {
 
         storage = findViewById(R.id.storage);
         camera = findViewById(R.id.camera);
+        network = findViewById(R.id.network);
 
         // Set Buttons on Click Listeners
-        /*storage.setOnClickListener(new View.OnClickListener() {
+        storage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-
+                checkPermission(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        STORAGE_PERMISSION_CODE);
             }
-        });*/
+        });
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
             {
                 checkPermission(Manifest.permission.CAMERA,
                         CAMERA_PERMISSION_CODE);
+            }
+        });
+
+        network.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                checkPermission(Manifest.permission.ACCESS_NETWORK_STATE,
+                        NETWORK_CHECK_PERMISSION_CODE);
             }
         });
     }
@@ -118,43 +131,6 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         }
-    }
-
-
-    private static final String POINTCUT_METHOD =
-            "execution(void com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.test()";
-
-    //@AnnotationTrace
-    public void test(){
-        Log.d("clickButton", "test: invocata funzione");
-    }
-
-    //@AnnotationTrace
-    public void StorageClick(View view) {
-        Log.d("clickButton", "Click storageclisk");
-        Prova(15, "Allik");
-        Prova2(10,"Bauu");
-        Prova3();
-        test();
-        Log.d("clickButton", "ritornato dalla funzione test.");
-        /*checkPermission(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                STORAGE_PERMISSION_CODE);*/
-    }
-
-    public static int Prova(int ciao, String Provaaa){
-        Log.d(DebugName.OUT, " Prova: Metodo prova " + ciao + " - " + Provaaa);
-        float provaa = (float) Math.random();
-        return 6;
-    }
-
-    public static void Prova2(int ciao, String Provaaa){
-        Log.d(DebugName.OUT, " Prova 2 invocato ");
-    }
-
-    public static int Prova3(){
-        Log.d(DebugName.OUT, " Prova 3 invocato ");
-        return 10;
     }
 
 

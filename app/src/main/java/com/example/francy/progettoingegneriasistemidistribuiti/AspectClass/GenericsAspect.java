@@ -13,21 +13,37 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class GenericsAspect {
-    private static final String CHECKSELFPERMISSION =
-            //"execution(public * *(..))";
-            "call(* android.app..*(..))";
+    private static final String MAINACTIVITY =
+            "call(* android.app.Activity..*(..))";
+
+    private static final String ONREQUESTPERMISSIONCALLBACL =
+            "execution(public * com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.*(..))";
 
     private static final String CHECKPERMISSION =
            "call(* android.support..*(..))";
-    @Pointcut(CHECKSELFPERMISSION)
-    public void checkSelfPermission(){
+
+
+    @Pointcut(MAINACTIVITY)
+    public void checkMainActivity(){
 
     }
 
-    @Around("checkSelfPermission()")
-    public Object implementationCheckSelfPermission(@NonNull ProceedingJoinPoint jp) throws Throwable {
+    @Around("checkMainActivity()")
+    public Object implementationcheckMainActivity(@NonNull ProceedingJoinPoint jp) throws Throwable {
         Object result = jp.proceed();
-        Log.d(DebugName.GENERIC, "1) implementationCheckSelfPermission-->" + jp.toString());
+        Log.d(DebugName.MAINACTIVITY, jp.toString());
+        return result;
+    }
+
+    @Pointcut(ONREQUESTPERMISSIONCALLBACL)
+    public void onRequestPermissionCallback(){
+
+    }
+
+    @Around("onRequestPermissionCallback()")
+    public Object implementationOnRequestPermissionCallback(@NonNull ProceedingJoinPoint jp) throws Throwable {
+        Object result = jp.proceed();
+        Log.d(DebugName.ONREQUESTPERMISSIONCALLBACK, jp.toString());
         return result;
     }
 
@@ -39,7 +55,7 @@ public class GenericsAspect {
     @Around("checkPermission()")
     public Object implementationCheckPermission(@NonNull ProceedingJoinPoint jp) throws Throwable {
         Object result = jp.proceed();
-        Log.d(DebugName.GENERIC, "2) implementationCheckPermission-->" + jp.toString());
+        Log.d(DebugName.GENERIC, jp.toString());
         return result;
     }
 }
