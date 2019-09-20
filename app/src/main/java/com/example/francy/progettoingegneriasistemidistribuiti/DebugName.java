@@ -5,13 +5,14 @@ package com.example.francy.progettoingegneriasistemidistribuiti;
  */
 
 public class DebugName {
+    public static int cont = 1;
     public final static String OUT = "Out - Fuori:";
 
     public final static String FIRST = "Francionic - Primo(AnnotationTrace):";
 
     public final static String SECOND = "Francionic - Secondo:";
 
-    public final static String THIRD = "Francionic - Terzo:";
+    public final static String REQUESTPERMISSIONS = "Francionic - RequestPermissions:";
 
     public final static String GENERIC = "Francionic - Android.Support:";
 
