@@ -1,0 +1,79 @@
+TODO:
+	Partire con scaricare il codice android sorgente.
+	Provare a capirci qualcosa.
+	Fare prova eliminando dal manifest la richiesta dei permessi e capire cosa succede.
+	Iniziare la relazione, panoramica su Android (magari presa dalla tesi), su aspectj e programmazione ad aspetti, sui pattern authenticato e authorizator?
+	Gestione del doppio utente in android e quindi far vedere che forse non serve. 
+	Documentare i due esperimenti e far vedere il resto del codice se lo trovo.
+	
+	
+	
+	
+	Implementazione di Context --> ContextImpl.java
+	ContextImpl::checkPermission --> Sfrutta ActivityManagerNative.getDefault().checkPermission
+		getDefault() restituisce l'istanza di un oggetto chiamato gDefault di tipo Singleton<IActivityManager> (nello specifico ActivityManagerProxy). 
+		Quindi invoca il metodo della classe stessa checkPermission.
+	ActivityManagerNative.getDefault().checkPermission --> Presumendo che asInterface restituisca un IActivityManager di tipo ActivityManagerService:
+	
+	
+					public int checkPermission(String permission, int pid, int uid) {
+						if (permission == null) {
+							return PackageManager.PERMISSION_DENIED;
+						}
+						return checkComponentPermission(permission, pid, uid, -1, true);
+					}
+					
+	checkComponentPermission --> return PackageManager.checkUidPermission(permission, uid). + vari casi
+	PackageManager.checkUidPermission --> (si ipotizza che venga invocato il metodo del PackageManagerService) 
+	
+					public int checkUidPermission(String permName, int uid) {
+						synchronized (mPackages) {
+							Object obj = mSettings.getUserIdLPr(uid);
+							if (obj != null) {
+								GrantedPermissions gp = (GrantedPermissions)obj;
+								if (gp.grantedPermissions.contains(permName)) {
+									return PackageManager.PERMISSION_GRANTED;
+								}
+							} else {
+								HashSet<String> perms = mSystemPermissions.get(uid);
+								if (perms != null && perms.contains(permName)) {
+									return PackageManager.PERMISSION_GRANTED;
+								}
+							}
+						}
+						return PackageManager.PERMISSION_DENIED;
+					}
+		
+				in ordine il metodo fa: Prende i settings di questo utente, controlla che il permesso richiesto sia tra quelli già garantiti, restituisce permesso garantito o negato.
+		
+		
+		
+		Altro:
+		MainActivity.requestPermissions --> activity.requestPermissions(permissions, requestCode);
+		activity.requestPermissions(permissions, requestCode); --> startActivityForResult
+		startActivityForResult -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		Parcel è un container di messaggi.
+		TODO: Approfondire Binder.
+		mRemote è un oggetto di tipo IBinder per la gestione delel chiamate in rete/tra processi.
+		
+	mRemote.transact --> IBinder.onTransact viene invocato quello di ActivityManagerNative (credo). 
+	IBinder.onTransact --> code == DUMP_TRANSACTION --> creo un filedescriptor invocando Parcel.readFileDescriptor()
+		Parcel.readFileDescriptor() --> Parcel.internalReadFileDescriptor.
+		In qualche modo arriva al dump con 3 parametri e potrebbe chiamare AccountManagerService.java --> dump() essendo questa un'estensione di Binder ?? .. 
+		Da dump in ActivityManagerService invoca dumpApplicationMemoryUsage.
+		
+		
+		
+		PackageManagerService.checkUidPermission dovrebbe essere quello finale.
