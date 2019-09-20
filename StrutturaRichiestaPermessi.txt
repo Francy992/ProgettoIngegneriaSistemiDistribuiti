@@ -51,29 +51,19 @@ TODO:
 		Altro:
 		MainActivity.requestPermissions --> activity.requestPermissions(permissions, requestCode);
 		activity.requestPermissions(permissions, requestCode); --> startActivityForResult
-		startActivityForResult -->
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		Parcel è un container di messaggi.
-		TODO: Approfondire Binder.
-		mRemote è un oggetto di tipo IBinder per la gestione delel chiamate in rete/tra processi.
-		
-	mRemote.transact --> IBinder.onTransact viene invocato quello di ActivityManagerNative (credo). 
-	IBinder.onTransact --> code == DUMP_TRANSACTION --> creo un filedescriptor invocando Parcel.readFileDescriptor()
-		Parcel.readFileDescriptor() --> Parcel.internalReadFileDescriptor.
-		In qualche modo arriva al dump con 3 parametri e potrebbe chiamare AccountManagerService.java --> dump() essendo questa un'estensione di Binder ?? .. 
-		Da dump in ActivityManagerService invoca dumpApplicationMemoryUsage.
-		
-		
-		
-		PackageManagerService.checkUidPermission dovrebbe essere quello finale.
+		startActivityForResult --> Se tutto va bene invoca, dopo aver invocato l'activity e gestito la risposta il comando passa a:  mMainThread.sendActivityResult
+		mMainThread.sendActivityResult --> Viene attivata una ClientTransaction dopo averla fatta schedulare ad un thread.  mAppThread.scheduleTransaction(clientTransaction)
+		mAppThread.scheduleTransaction(clientTransaction) --> ActivityThread.this.scheduleTransaction(transaction)
+		ActivityThread.this.scheduleTransaction(transaction --> sendMessage(ActivityThread.H.EXECUTE_TRANSACTION, transaction);
+		sendMessage(ActivityThread.H.EXECUTE_TRANSACTION, transaction); -->  mH.sendMessage(msg) (quello di ActivityThread che implementa i metodi astratti di ClientTransactionHandler.
+		 mH.sendMessage(msg); --> sendMessageDelayed(msg, 0);
+		 sendMessageDelayed(msg, 0); --> sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);
+		 sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis) --> enqueueMessage(queue, msg, uptimeMillis);
+		 enqueueMessage(queue, msg, uptimeMillis); --> queue.enqueueMessage(msg, uptimeMillis); --> qui ci blocchiamo e con ogni probabilità ripartirà da 
+			public abstract void handleSendResult(IBinder token, List<ResultInfo> results, String reason) di ActivityThread in quanto estende ClientTransactionHandler ed è 
+			definito come:/** Deliver result from another activity. */
+		handleSendResult(IBinder token, List<ResultInfo> results, String reason) --> deliverResults(r, results, reason);
+		deliverResults(r, results, reason) --> r.activity.dispatchActivityResult(ri.mResultWho, ri.mRequestCode, ri.mResultCode, ri.mData, reason)
+		r.activity.dispatchActivityResult(ri.mResultWho, ri.mRequestCode, ri.mResultCode, ri.mData, reason) --> onRequestPermissionsResult(requestCode, permissions, grantResults)
+		onRequestPermissionsResult(requestCode, permissions, grantResults) --> Questa è la callBack, qui viene invocato il codice scritto da noi.
+	
