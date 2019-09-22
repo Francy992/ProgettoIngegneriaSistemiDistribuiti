@@ -14,9 +14,14 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class GenericsAspect {
 
-    private static final String MAINACTIVITY = "call(* com.example.francy.progettoingegneriasistemidistribuiti.MainActivity..*(..))";
+    //Join Point
+    private static final String MAINACTIVITY = "call(* com.example.francy.progettoingegneriasistemidistribuiti.MainActivity.checkPermission(..))";
+
+    //Pointcut
     @Pointcut(MAINACTIVITY)
     public void checkMainActivity(){}
+
+    //Advice
     @Around("checkMainActivity()")
     public Object implementationcheckMainActivity(@NonNull ProceedingJoinPoint jp) throws Throwable {
         Object result = jp.proceed();
@@ -34,7 +39,7 @@ public class GenericsAspect {
         return result;
     }
 
-    private static final String CHECKPERMISSION = "call(* android.support..*(..))";
+    private static final String CHECKPERMISSION = "call(* checkSelfPermission(..))";
     @Pointcut(CHECKPERMISSION)
     public void checkPermission(){}
     @Around("checkPermission()")
@@ -54,23 +59,7 @@ public class GenericsAspect {
         return result;
     }
 
-    private static final String DISPATCHREQUESTPERMISSIONSRESULT1 = "call(android.app.ContextImpl.*(..))";
-    @Pointcut(DISPATCHREQUESTPERMISSIONSRESULT1)
-    public void dispatchRequestPermissionsResultAspect1(){ }
-    @Around("dispatchRequestPermissionsResultAspect1()")
-    public Object implementationdispatchRequestPermissionsResult1(@NonNull ProceedingJoinPoint jp) throws Throwable {
-        Object result = jp.proceed();
-        Log.d(DebugName.cont++ + ") Francionic: requestPermissions1", jp.toString());
-        return result;
-    }
 
-    private static final String DISPATCHREQUESTPERMISSIONSRESULT2 = "execution(android.app.ContextImpl.*(..))";
-    @Pointcut(DISPATCHREQUESTPERMISSIONSRESULT2)
-    public void dispatchRequestPermissionsResultAspect2(){ }
-    @Around("dispatchRequestPermissionsResultAspect2()")
-    public Object implementationdispatchRequestPermissionsResult2(@NonNull ProceedingJoinPoint jp) throws Throwable {
-        Object result = jp.proceed();
-        Log.d(DebugName.cont++ + ") Francionic: requestPermissions1", jp.toString());
-        return result;
-    }
+
+
 }

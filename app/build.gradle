@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
-import org.aspectj.bridge.IMessage
-import org.aspectj.bridge.MessageHandler
-import org.aspectj.tools.ajc.Main
 
-
+import org.aspectj.bridge.IMessage //For Aspectj
+import org.aspectj.bridge.MessageHandler //For Aspectj
+import org.aspectj.tools.ajc.Main //For Aspectj
 
 android {
     compileSdkVersion 28
@@ -31,20 +30,18 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'org.aspectj:aspectjrt:1.9.4'
     implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'org.aspectj:aspectjrt:1.9.4' //For Aspectj
 }
 
 
 final def log = project.logger
 final def variants = android.applicationVariants
-
 variants.all { variant ->
     if (!variant.buildType.isDebuggable()) {
         log.debug("Skipping non-debuggable build type '${variant.buildType.name}'.")
         return;
     }
-
     JavaCompile javaCompile = variant.javaCompile
     javaCompile.doLast {
         String[] args = ["-showWeaveInfo",
@@ -55,7 +52,6 @@ variants.all { variant ->
                          "-classpath", javaCompile.classpath.asPath,
                          "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
         log.debug "ajc args: " + Arrays.toString(args)
-
         MessageHandler handler = new MessageHandler(true);
         new Main().run(args, handler);
         for (IMessage message : handler.getMessages(null, true)) {

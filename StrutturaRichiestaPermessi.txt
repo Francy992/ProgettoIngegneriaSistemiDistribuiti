@@ -66,4 +66,25 @@ TODO:
 		deliverResults(r, results, reason) --> r.activity.dispatchActivityResult(ri.mResultWho, ri.mRequestCode, ri.mResultCode, ri.mData, reason)
 		r.activity.dispatchActivityResult(ri.mResultWho, ri.mRequestCode, ri.mResultCode, ri.mData, reason) --> onRequestPermissionsResult(requestCode, permissions, grantResults)
 		onRequestPermissionsResult(requestCode, permissions, grantResults) --> Questa è la callBack, qui viene invocato il codice scritto da noi.
+		
+		
+		
+		
+		Ultima prova - No manifest:
+		Attenzionare @Override
+		public void startActivityForResult( 
+			mInstrumentation.execStartActivity in Activity 
+		mInstrumentation.execStartActivity --> (Si da per scontato che a partire sia MonitoringInstrumentation.execStartActivity)...
+													Se va bene lui esegue startActivity e controlla che non ci siano errori con checKqualcosa, poi ritorna null.
+		Con il ritorno di null cancella l'input dell'utente tanto ormai lo startActivity precedente si è avviato.
+
+
+		StartActivity avvia Instrumental.execStartActivityFromAppTask che dovrebbe invocare appTask.startActivity
+		appTask.startActivity di AppTaskImpl --> mService.getActivityStartController().obtainStarter
+		mService.getActivityStartController().obtainStarter --> Ritorna un oggetto di tipo ActivityStarter che una volta configurato come si deve va in esecuzione
+		ActivityStarter.execute() --> ActivityStarter.startActivity
+		ActivityStarter.startActivity --> ActivityStarter.startActivity
+		ActivityStarter.startActivity --> err = ActivityManager.START_PERMISSION_DENIED. Da qui torna indietro.
+
+
 	

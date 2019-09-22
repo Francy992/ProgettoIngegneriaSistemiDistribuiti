@@ -12,7 +12,7 @@ public class DebugName {
 
     public final static String SECOND = "Francionic - Secondo:";
 
-    public final static String REQUESTPERMISSIONS = "Francionic - RequestPermissions:";
+    public final static String REQUESTPERMISSIONS = "Francionic - checkSelfPermission:";
 
     public final static String GENERIC = "Francionic - Android.Support:";
 
