@@ -1,90 +1,140 @@
-TODO:
-	Partire con scaricare il codice android sorgente.
-	Provare a capirci qualcosa.
-	Fare prova eliminando dal manifest la richiesta dei permessi e capire cosa succede.
-	Iniziare la relazione, panoramica su Android (magari presa dalla tesi), su aspectj e programmazione ad aspetti, sui pattern authenticato e authorizator?
-	Gestione del doppio utente in android e quindi far vedere che forse non serve. 
-	Documentare i due esperimenti e far vedere il resto del codice se lo trovo.
+Cose da sapere:
+	Coesione
+	Coupling
+	Pattern Proxy (esempio Proxy Protection e lettura/scrittura del libro dopo aver controllato i permessi)
+	Pattern per la sicurezza:
+		Reference Monitor	--> Soggetto - Request - ReferenceMonitor(Concrete Monitor) Controlla nel SetdiAutorizzazioni le Autorizzaizoni ep rla richiesta attuale
+		Role Based Access Control --> Per evitare di assegnare ad ogni utente x permessi, si settano i permessi su un oggetto ad un ruolo e ogni utente ha diversi ruoli.
+	Pattern Remote Proxy --> RealSubject è remoto, il RemoteProxy permette la richiesta da parte del client in modo trasparente senza indicare così dove si trovare l'oggetto remoto.
+							 Il remoteProxy può essere diviso in RemoteProxy e SockCommunication (e sockListener nel server) in modo da separare il modo in cui i dati sono comunicati.
 	
-	
-	
-	
-	Implementazione di Context --> ContextImpl.java
-	ContextImpl::checkPermission --> Sfrutta ActivityManagerNative.getDefault().checkPermission
-		getDefault() restituisce l'istanza di un oggetto chiamato gDefault di tipo Singleton<IActivityManager> (nello specifico ActivityManagerProxy). 
-		Quindi invoca il metodo della classe stessa checkPermission.
-	ActivityManagerNative.getDefault().checkPermission --> Presumendo che asInterface restituisca un IActivityManager di tipo ActivityManagerService:
-	
-	
-					public int checkPermission(String permission, int pid, int uid) {
-						if (permission == null) {
-							return PackageManager.PERMISSION_DENIED;
-						}
-						return checkComponentPermission(permission, pid, uid, -1, true);
-					}
+	Pattern Forward-Receiver --> Fornisce comunicazione trasparente tra processi in modo da astrarre il tipo di comunicazione dal sistema.  I due Sock precedenti sono Forward-Receiver.
+								 I due proxy precedenti sono Peer.
 					
-	checkComponentPermission --> return PackageManager.checkUidPermission(permission, uid). + vari casi
-	PackageManager.checkUidPermission --> (si ipotizza che venga invocato il metodo del PackageManagerService) 
+	Design Patter Authenticator --> Permette di verificare che il soggetto che intende accedere al sistema è chi dice di essere. Soluzione flessibile e dependabulity (affidabile e sicuro).
+									Singolo punto di accesso. La soluzione ha un Subject, un AuthenticationInfo (implementa Authenticator) che restituisce un ProofOfIdentity.
+									Flessibile (si possono cambiare protocolli ecc), si può livellare il costo alle nostre esigenze.
+									Varianti SingleSignOn (un solo login per tutti i dominI).
+									
+	Design Pattern Remote Authenticator --> Autorizzazione in un sistema distribuito. Sopra il sistema di login era centralizzato, in un sistema distribuito no ndobbiamo avere ridonzanza e gli 
+											utenti NON dovrebbero sapere dove si trova il server di autenticazione.
+											Il client fa richiesta ad un ProxyAuthenticator che invia la richiesta al RemoteAuthenticator.
+											Contro è lento, pro tutto è centralizzato, database unico, trasparente all'utente.
 	
-					public int checkUidPermission(String permName, int uid) {
-						synchronized (mPackages) {
-							Object obj = mSettings.getUserIdLPr(uid);
-							if (obj != null) {
-								GrantedPermissions gp = (GrantedPermissions)obj;
-								if (gp.grantedPermissions.contains(permName)) {
-									return PackageManager.PERMISSION_GRANTED;
-								}
-							} else {
-								HashSet<String> perms = mSystemPermissions.get(uid);
-								if (perms != null && perms.contains(permName)) {
-									return PackageManager.PERMISSION_GRANTED;
-								}
-							}
-						}
-						return PackageManager.PERMISSION_DENIED;
-					}
-		
-				in ordine il metodo fa: Prende i settings di questo utente, controlla che il permesso richiesto sia tra quelli già garantiti, restituisce permesso garantito o negato.
-		
-		
-		
-		Altro:
-		MainActivity.requestPermissions --> activity.requestPermissions(permissions, requestCode);
-		activity.requestPermissions(permissions, requestCode); --> startActivityForResult
-		startActivityForResult --> Se tutto va bene invoca, dopo aver invocato l'activity e gestito la risposta il comando passa a:  mMainThread.sendActivityResult
-		mMainThread.sendActivityResult --> Viene attivata una ClientTransaction dopo averla fatta schedulare ad un thread.  mAppThread.scheduleTransaction(clientTransaction)
-		mAppThread.scheduleTransaction(clientTransaction) --> ActivityThread.this.scheduleTransaction(transaction)
-		ActivityThread.this.scheduleTransaction(transaction --> sendMessage(ActivityThread.H.EXECUTE_TRANSACTION, transaction);
-		sendMessage(ActivityThread.H.EXECUTE_TRANSACTION, transaction); -->  mH.sendMessage(msg) (quello di ActivityThread che implementa i metodi astratti di ClientTransactionHandler.
-		 mH.sendMessage(msg); --> sendMessageDelayed(msg, 0);
-		 sendMessageDelayed(msg, 0); --> sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);
-		 sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis) --> enqueueMessage(queue, msg, uptimeMillis);
-		 enqueueMessage(queue, msg, uptimeMillis); --> queue.enqueueMessage(msg, uptimeMillis); --> qui ci blocchiamo e con ogni probabilità ripartirà da 
-			public abstract void handleSendResult(IBinder token, List<ResultInfo> results, String reason) di ActivityThread in quanto estende ClientTransactionHandler ed è 
-			definito come:/** Deliver result from another activity. */
-		handleSendResult(IBinder token, List<ResultInfo> results, String reason) --> deliverResults(r, results, reason);
-		deliverResults(r, results, reason) --> r.activity.dispatchActivityResult(ri.mResultWho, ri.mRequestCode, ri.mResultCode, ri.mData, reason)
-		r.activity.dispatchActivityResult(ri.mResultWho, ri.mRequestCode, ri.mResultCode, ri.mData, reason) --> onRequestPermissionsResult(requestCode, permissions, grantResults)
-		onRequestPermissionsResult(requestCode, permissions, grantResults) --> Questa è la callBack, qui viene invocato il codice scritto da noi.
-		
-		
-		
-		
-		Ultima prova - No manifest:
-		Attenzionare @Override
-		public void startActivityForResult( 
-			mInstrumentation.execStartActivity in Activity 
-		mInstrumentation.execStartActivity --> (Si da per scontato che a partire sia MonitoringInstrumentation.execStartActivity)...
-													Se va bene lui esegue startActivity e controlla che non ci siano errori con checKqualcosa, poi ritorna null.
-		Con il ritorno di null cancella l'input dell'utente tanto ormai lo startActivity precedente si è avviato.
-
-
-		StartActivity avvia Instrumental.execStartActivityFromAppTask che dovrebbe invocare appTask.startActivity
-		appTask.startActivity di AppTaskImpl --> mService.getActivityStartController().obtainStarter
-		mService.getActivityStartController().obtainStarter --> Ritorna un oggetto di tipo ActivityStarter che una volta configurato come si deve va in esecuzione
-		ActivityStarter.execute() --> ActivityStarter.startActivity
-		ActivityStarter.startActivity --> ActivityStarter.startActivity
-		ActivityStarter.startActivity --> err = ActivityManager.START_PERMISSION_DENIED. Da qui torna indietro.
-
-
+	Autenticazione, Autorizzazioen e Accounting --> Ogni utente può usare alcuni servizi, quali sono decisi dai permessi, quindi ogni richiesta deve essere filtrata prima di essere eseguita.
+	Design Pattern Local Controller -->	Ha lo scopo di ridurra il numero di controlli di autorizzazione svolti dal servizio centralizzato di cui sopra.
+										Quindi sul client manteniamo una cache (localController) di token di autorizzazioni e lista di permessi per token oltre che risposte da parte dei servizi.
+										
+	Essendo le trasmissioni remote lente un'interfaccia remota fa tanti compiti e non solo uno in modo da ridurre le comunicazioni (coarse-grained). La logica interna rimane fine-grained,
+	ai confini della comunicazione però si utilizzano oggetti coarse-grained.
 	
+	Design pattern Remote Facade --> Implementa la logica Coarse-grained andando a chiamare tanti metodi interni coarse-grained ma ritornando al servizio esterno un oggetto BIG.
+									 Dovendo restituire oggetti "Grandi" bisogna capire con che tipologia:
+	
+	Design pattern DataTransfer Object --> 	Essendo il parametro di ritorno un singolo valore grande si crea un oggetto che è un accumulo di tanti oggetti. Ci possono essere più
+											DTO in funzione di diverse chiamate da diversi soggetti. Inoltre il DTO deve sapere come serializzarsi e spedirsi (serializable/xml/json).
+											
+	Concern e Aspected Oriented per evitare metodi sparsi in tutte le classi --> Concern è un modulo relativo a un requisito del sistema software. 
+											Logging è solitamente un Concern traversale (crosscutting) in quanto è presente in tutte le classi.
+											Con l'aspected oriented si eviterebbero i metodi sparsi in quanto si crea un aspetto che intercetta determinate esecuzioni e 
+											ed esegue determinate azioni. Aspected oriented permette di definire un aspetto che specifica quali azioni compiere quando.
+											
+											JoinPoint è un punto all'interno dell'esecuzione di un programma (esempio call qualcosa)
+											Pointcut seleziona vari JoinPoint e li combina tramite espressioni logiche.
+											Advice è il codice che viene eseguito quando il pointcut si attiva (prima dopo o durante il metodo reale).
+											Weaver è un compilatore che fonde insieme oop e aspect oriented.
+											
+	Gestione della sessione --> Due idee principali, server stateful e stateless.
+	Design pattern client session state 	--> 	Conserva lo stato della sessione sul client, il server è di conseguenza stateless. Per ogni comunicazione si usa un DataTransferObject oppure 
+													si possono utilizzare i cookie. Si usa spesso per identificare la sessione. 
+	Design pattern Server Session State 	--> 	Conserva lo stato della sessione nel server in forma serializzata o sul db o sul fyle sistem.
+	Design pattern DatabaseSessioNSstata	--> 	Conserva lo stato della sessione sul database, sfrutta il token di sessione conservato sul client per recuperare la sessione.
+													Pro: facilita il clustering in accoppiata all'utilizzo della cache e magari ad un mix con client session state.
+	Design pattern Serialized LOB 			-->		Conserva un grafo di oggetti serializzandolo dentro un singolo grande oggetto. Infatti quando si serializzano oggetti
+													questi solitamente hanno riferimenti ad altri oggetti ecc
+													
+	Pattern architetturale Broker			-->		Disaccoppia componenti che interagiscono tramite invocazioni remote, esso infatti è responsabile della comuinicazione tra i componenti.
+													I server si registrano al broker e i client richiedono i servizi al broker.
+													I componenti necessari sono: Client --> Client-sideProxy --> Broker (con un bridge nel caso di comunicazioni via rete) -->
+													--> Server-sideProxy --> server.
+													Il www è il broker più conosciuto e famoso.
+													
+	Java 8									-->  	Java 8 include programmazione funzionale come:
+													Espressioni lambda x -> System.out.println("Ciao" + x);
+													Classe anonima per implementare interfacce con un solo metodo al volo.
+													Si possono passare/ritornare e creare funzioni nei metodi (considerate funzioni di ordine più alto).
+													Java Collection arrayList, LInkedList, TreeSet. 
+													Metodi di default per le interfacce (che non modificano lo stato)
+													Stream: agisce su uno stream() ossia una sequenza di elementi su cui è permesso eseguire operazioni.
+													Filter: metodo Lazy, filtra uno stream.
+													Count: metodo eager, conta gli elementi di uno streami.
+													Predicate: rappresenta un'interfaccia funzionale, ossia un'interfaccia che definisce un solo metodo.
+													Reduce: eager, applica una funzione che gli viene passata a tutti gli elementi dello stream, ha un valore iniziale.
+													Map: Restituisce uno stream da uno stream a cui ha applicato la funzione passata come argomento.
+													E' semplice parallelizzare gli stream con parallelStream()
+													
+	Annotazioni in java						-->		Le annotazioni sono meta dati, cioè dati che descrivono dati. C'è ne sono di predefinite e altre che si possono creare.
+													Retention è la meta-annotazione che permette di comunicare al compilatore come trattare le annotazioni, ossia rimuoverle, ignorarle o guardarle.
+													
+	Interfaccia Future 	--> 	rappresenta un risultato che sarà disponibile successivamente. Permette al thread chiamante di continuare la propria esecuzione e non bloccarsi aspettando
+								il risultato. Quando il risultato è necessario si può chiamare il metodo get() sul Future e questo ritorna il risultato o blocca il trhead.
+	CompletableFuture	-->		è un oggetto simile al precedente che però avvia un thread separato prendendo un Supplier (ossia una funzione senza parametri in ingresso).
+								Si può sapere se il risultato è pronto con isDone.
+								
+	Modello Stride 		--> 	I problemi di sicurezza sono spesso categorizzati tramite il modello di rischio Stride:
+									Spoofing	--> identità contraffatta. 							(Authenticator per evitare)
+									Tampering	--> Falsificazione dei dati.	
+									Repudiation	-->	Ripudiare un'azione fatta.
+									Information disclosure 	--> mostrare dati privati (fuga di informazioni).	(Reference monitor- authorization, ecc)
+									Denial of service		--> indisponibilità del servizio.
+									Elevation of privilege	--> innalzamento dei privilegi
+									
+								Per gli altri invece DMZ e protectionReverseProxy.
+								
+	Design pattern Packet Filter Firewall(Information discloure) --> Identifica e blocca host che cernano di attaccare la rete locale tramite filtri IP.
+																	 Il PFF intercetta tutti i pacchetti e ne controlla l'header. Fa passare solo i pacchetti con ip ammesso.
+																	 Non riersce a riconoscere indirizzi contraffatti e non protegge da attacchi contenuti all'interno del pacchetto.
+	Design pattern Proxy-Based Firewall		--> 	In aggiunta al Packet Filter Firewall si introduce un proxy che controlla il contenuto dei pacchetti alla ricerca di minacce.
+													Introduce anche un Proxy per il servizio in modo che il vero servizio non venga mai contattato e il proxy del servizio è 
+													contattato SOLO se il proxy del filter trova la regola giusta.
+													Naturalmente più sicuro del precedente perchè ispeziona anche i dati, ma può appesantire il sistema.
+	DemilitarizedZone	--> 	Espone all'esterno solo una parte di sottorete e separa la sottorete sicura da quella esposta tramite un Firewall.
+								Quindi avremo il client --> router esterno --> firewall --> webServer --> Router interno --> applicazioni server.
+								Può essere aumentata la profondità in modo da aumentare la sicurezza.
+								
+	Protection Reverse Proxy 	--> Protegge dalle vulnerabilità di livello applicativo andando a mettere un firewall esterno, una dmz e un firewall interno in modo da bloccare 
+									vari tipi di attacchi applicativi. La topologia di rete deve essere rivista.
+									Solo una macchina, quella esposta, necessita di continui aggiornamenti.
+									Se il reverse proxy (DMZ) smette di funzionare non funziona + nulla.
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
+													
