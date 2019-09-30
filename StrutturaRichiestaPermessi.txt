@@ -107,8 +107,105 @@ Cose da sapere:
 									Solo una macchina, quella esposta, necessita di continui aggiornamenti.
 									Se il reverse proxy (DMZ) smette di funzionare non funziona + nulla.
 													
+	Corba --> 	E' un framework indipendente dal so e dal linguaggio id programmazione e permette di utilizzare gli oggetti remoti come se fossero
+				locali.
+				
+	Stabilità 	-->	Un sistema che continua a provare di concludere una transazione si dice stabile. Però, quando abbiamo la rete di mezzo non dovremmo
+					aspettare in eterno una risposta dalla rete. L'uso dei Timeout può risolvere il problema.
+	Design pattern Circuit Breaker 	--> 	Inseriamo le parti critiche soggette a possibili interruzioni in un "Circuito chiuso". Il circuit breaker
+											tiene traccia del numero di fallimenti, superata una certa soglia il circuito si apre. Dopo un'ulteriore 
+											quantità di tempo senza fare prove il circuito passa in posizione semi aperta e fa una prova. Se ha successo
+											allora apre il circuito altrimenti lo richiude.
+											
+	FORSE DA AGGIUNGERE PARTE 16 DI TRAMONTANA
+
+	PARTE DI LABORATORIO.
+	DevOps 	--> E' una cultura che promuove la collaborazione tra team di sviluppo e i sistemisti velocizzando il deploy in produzione in modo			
+				automatico e ripetibile. Pratiche utilizzate sono:
+					- Pipeline: pipeline e un gruppodi lavoro sono raggruppati in "stage" e sono eseguiti contemporaneamente. 
+					- Continuous integration: I commit scatenano l'esecuzione della compilazione e l'avvio dei test automatici.
+					- Continuos delivery: I commit dopo l'esecuzione dei test fanno il deploy automatico.
+					- Microservice: si basa sulla costruzione di una grande applicazione come insieme di servizi più piccoli e indipendenti.
+					- Infrastructure as code: l'infrastruttura viene creata e gestita tramite codice, è più semplice da gestire.
+					- Monitoring e logging: si attenzionano i log e le metriche er capire cosa e com sta succedendo.
+					- Communication and collaboration:  ...
+					
+	Git 	--> Un VCS o versioning control system ha il compito di registrare tutti i cambiamenti ai file e permettere agli sviluppatori di lavorare in
+				contemporanea.
+				Gli obiettivi di git sono un supporto alla programmazione non lineare tramite branch, essere totalmente distribuito e ottimizzare spazio eager
+				velocità. Molte operazioni sono svolte offline.
+				Git scatta e salva una "foto" del sistema in un determinato momento.
+				Primo setup: git config user.name, email e core.editor. 
+				Comandi: 	git init: inizializza una repository
+							git add *: aggiunge tutti i file e le cartelle al tracking di git.
+							git commit -m "messaggio": salva i cambiamenti in locale.
+							git checkout "bramch": passa ad un nuovo branch. Se si aggiunge -b e il branch non esiste allora lo crea.
+							git status: mostra lo stato del repository locale.
+							git commit --amend: annulla l'ultimo commit.
+							git reset --hard HEAD: annulla tutte le modifiche locali.
+							git tag "10 caratteri": setta i primi 10 caratteri di un commit ID.
+							git branch "nome" -d(per eliminare): crea/elimina un branch.
+							REMOTE
+							git push: invia i cambiamenti locali al repository remoto
+							git fetch: controlla se vi sono cambiamenti nel repository remoto
+							git pull: scarica la versione + aggiornata del repository remoto.
+							git rebase nomeBranch: ti sposta i commit dal branch corrente alla testa del nomeBranch. In questo modo si ha una history lilneare.
+							git reset commit: 
+				I conflitti vanno risolti manualmente andando ad indicare quali righe prendere in un merge tra le n proposte.
+				
+	Testing combinatoriale e model checking	-->	Il software è unico, complesso, variabile e critico. Inoltre è non lineare, ossia i difetti non sono	
+												ben distribuiti.
+												Per quanto riguarda il test del software ci vuole un equilibrio tra costi e affidabilità del sistema.
+												Un test suite è un insieme di test case.
+												Un test case è una tripla, input, output, ambiente.
+												Un input è una combinazione di parametri da dare come input alla procedura.
+												Un output è il valore aspettato.
+												Un Ambiente è il contesto di esecuzione.
+												
+												Problemi legati all'input: quali parametri da passare?
+												Problemi dell'output: come decidere l'output atteso?
+												Due possibili approcci: Test combinatoriale e model checking.
+												
+												Test combinatoriale:
+													Si cercano combinazioni di parametri in modo automatico che portano a fail del sistema.
+													Si cerca anche e sopratutto il giusto equilibrio tra le prove esaustive e il Pairwise
+													Si possono anche imporre condizioni sulla generazione delle combinazione dei parametri.
+												Model Checking: 
+													Se  le specifiche di un sistema sono chiare allora se ne può estrapolare un modello (automi a stati finiti)
+													e quindi testare tutti i cambiamenti di stato.
 													
-													
+	Infrastructure Automation con OpenStack -->	Al completamento dello sviluppo di una nuova infrastruttura dobbiamo cercare di prevedere il carico sui server
+												a regime. Se sottostimiamo creiamo un disservizio, se sovrastimiamo sprechiamo dei soldi.
+												La soluzione è il cloud computing.
+												Questo permette di ottenere di più pagando in base a ciò che effettivamente è necessario.
+												Un middleware cloud è un gestore di risorse, cpu, disco, memoria e banda.
+												OpenStack è un software open source per il controllo di grandi insiemi di risorse computazionali ecc.
+												E' gestito tramite web dashboard o via api.
+	
+	Microservizi	--> Il lasco accoppiamento è di quattro tipi:
+							- Funzionale
+							- Dati
+							- Sviluppo
+							- Processo
+						Serve ad evitare che un brusco fallimento interrompa tutto il sistema.
+						Nello sviluppo di un'applicazione monolitica abbiamo i seguenti problemi:
+						- Al crescere della dimensione del sistema diminuisce la produttività del sistema.
+						- Non si possono cambiare le tecnologie
+						- Se si vuole aggiornare una parte del sistema bisogna aggiornarlo tutto.
+						- Per scalare bisogna replicare tutto il sistema e questo produce un costo.
+						I microservizi invece sono utili per questi motivi:
+						- Decentralizzati, riusabili, più semplice comprendere il comportamento ecc.
+						
+						Deve essere tanto piccolo da svolgere un solo compito e bene. 
+						Introducono la difficoltà dei sistemi distribuiti: inter-service communication, monitoring, failure, testing ecc.
+						Nello  sviluppo vengono utilizzati:
+							- Service discovery (Netflix OSS Eureka) in modo da non associarsi ad un indirizzo ip specifico ma ad un nome.
+							- Load balancing (netflix OSS Ribbon) in modo da livellare il carico arrivato al server nel caso di servizio copiato in più processi.
+							- API Gateway (netflix OSS Zuul) disaccoppia i client dalle API REST dei singoli microservizi. è un microservizio separato
+								che funge da router e associa le API esterne a quelle interni.
+						I microservizi dovrebbero essere stateless.
+												
+												
 													
 													
 													
